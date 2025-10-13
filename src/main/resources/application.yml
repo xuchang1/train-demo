@@ -1,0 +1,28 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    username: postgres
+    password: 123456
+    url: jdbc:postgresql://localhost:5432/postgres
+    driver-class-name: org.postgresql.Driver
+
+    # Druid 连接池配置
+#    druid:
+#      max-wait: 10000       # 获取连接等待超时时间
+#      fail-fast: true      # 未获取到连接时快速失败
+
+
+#      initial-size: 5       # 初始化连接数
+#      min-idle: 5           # 最小空闲连接数
+#      max-active: 20        # 最大连接数
+#      time-between-eviction-runs-millis: 60000
+#      min-evictable-idle-time-millis: 300000
+#      validation-query: SELECT 1
+#      test-while-idle: true
+#      test-on-borrow: false
+#      test-on-return: false
+
+mybatis:
+  mapper-locations: classpath:/mapper/*
