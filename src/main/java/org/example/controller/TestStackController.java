@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @RestController
 @Slf4j
 public class TestStackController {
@@ -21,9 +23,21 @@ public class TestStackController {
         return id;
     }
 
+    private AtomicInteger i1 = new AtomicInteger();
+
+    private AtomicInteger i2 = new AtomicInteger();
+
     @GetMapping("testException")
     public void testException() {
+        log.info("testException次数 ：{}", i1.incrementAndGet());
         testStackService.testException();
+    }
+
+    @GetMapping("testException2")
+    public String testException2() {
+        log.info("testException2次数 ：{}", i2.incrementAndGet());
+        testStackService.testException();
+        return "0";
     }
 
     @GetMapping("testStop")

@@ -16,7 +16,7 @@ public class TestStackServiceImpl implements TestStackService {
 
     @Override
     public void testException() {
-        throw new RuntimeException();
+        throw new RuntimeException("异常");
     }
 
     @Override

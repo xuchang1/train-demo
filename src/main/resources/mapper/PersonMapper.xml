@@ -6,4 +6,8 @@
         select id, name from person where id = #{id}
     </select>
 
+    <select id="selectByPage" resultType="org.example.entity.Person">
+        select id, name from person
+    </select>
+
 </mapper>

@@ -9,6 +9,11 @@ spring:
     driver-class-name: org.postgresql.Driver
 
     # Druid 连接池配置
+#  cloud:
+#    circuitbreaker:
+#      # feign本身不支持fail back的能力，通过其他框架实现。hystrix可以提供该能力，但是高版本已废弃。
+#      hystrix:
+#        enabled: true
 #    druid:
 #      max-wait: 10000       # 获取连接等待超时时间
 #      fail-fast: true      # 未获取到连接时快速失败
@@ -26,3 +31,37 @@ spring:
 
 mybatis:
   mapper-locations: classpath:/mapper/*
+
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 100000
+        read-timeout: 100000
+  circuitbreaker:
+    enabled: true
+  hystrix:
+    enabled: true
+
+# 可能需要配置超时时间
+hystrix:
+  threadpool:
+    default:
+      coreSize: 10
+      maxQueueSize: 1500
+      queueSizeRejectionThreshold: 1000
+  command:
+    default:
+      circuitBreaker:
+        forceClosed: false
+        errorThresholdPercentage: 85
+        sleepWindowInMilliseconds: 3000
+        requestVolumeThreshold: 500
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 120000
+

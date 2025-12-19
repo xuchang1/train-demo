@@ -3,12 +3,12 @@ package org.example.feign;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@FeignClient(name = "TestFeign", url = "localhost:8082", fallback = TestFeignFallBack.class)
-public interface TestFeign {
+@FeignClient(name = "TestFeign2", url = "localhost:8082")
+public interface TestFeignBack {
 
     @GetMapping("/user/{id}")
     String testFeign(String id);
 
-    @GetMapping("/testException")
-    String testException();
+    @GetMapping("/testException2")
+    String testException2();
 }
