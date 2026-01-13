@@ -48,7 +48,7 @@ feign:
 hystrix:
   threadpool:
     default:
-      coreSize: 10
+      coreSize: 1
       maxQueueSize: 1500
       queueSizeRejectionThreshold: 1000
   command:
@@ -56,12 +56,12 @@ hystrix:
       circuitBreaker:
         forceClosed: false
         errorThresholdPercentage: 85
-        sleepWindowInMilliseconds: 3000
-        requestVolumeThreshold: 500
+        sleepWindowInMilliseconds: 30000
+        requestVolumeThreshold: 10
       execution:
         timeout:
           enabled: true
         isolation:
           thread:
-            timeoutInMilliseconds: 120000
+            timeoutInMilliseconds: 12000
 

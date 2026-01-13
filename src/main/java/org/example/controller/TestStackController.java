@@ -62,4 +62,9 @@ public class TestStackController {
         log.info("结束testFeign方法");
         return result;
     }
+
+    @GetMapping("testNormalFeign")
+    public String testNormal() {
+        return "1";
+    }
 }

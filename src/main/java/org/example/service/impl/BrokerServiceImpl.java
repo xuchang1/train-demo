@@ -22,4 +22,9 @@ public class BrokerServiceImpl implements BrokerService {
         log.info("请求次数 ：{}", i.incrementAndGet());
         return testFeign.testException();
     }
+
+    @Override
+    public String testNormal() {
+        return testFeign.testNormal();
+    }
 }

@@ -1,78 +1,36 @@
 package org.example;
 
 import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
 import rx.schedulers.Schedulers;
 
 public class DebugObservable1 {
 
     public static void main(String[] args) throws Exception {
+        // 定义被观察者（数据源）
+        Observable<Integer> observable = Observable.range(1, 5);
 
-        Observable<Integer> source = Observable.defer(() -> {
-                    System.out.println("[defer] executed, thread = " + Thread.currentThread().getName());
-                    return Observable.just(1, 2, 3);
+        observable
+                .map(i -> {
+                    System.out.println("map1 : " + Thread.currentThread().getName() + ", " + i);
+                    return i * 10;
                 })
-                .doOnSubscribe(() ->
-                        System.out.println("[doOnSubscribe] thread = " + Thread.currentThread().getName())
-                )
-                .map(x -> {
-                    System.out.println("[map] " + x + ", thread = " + Thread.currentThread().getName());
-                    return x * 10;
+                // subscribeOn 定义被观察者执行的异步线程池
+                .subscribeOn(Schedulers.io())       // 数据发射在 IO 线程
+                .map(i -> {
+                    System.out.println("map2 : " + Thread.currentThread().getName() + ", " + i);
+                    return i * 10;
                 })
-                .lift(new LogOperator())  // 自定义操作符
-                .doOnNext(x ->
-                        System.out.println("[doOnNext] value = " + x + ", thread = " + Thread.currentThread().getName())
-                )
-                .doOnCompleted(() ->
-                        System.out.println("[doOnCompleted] thread = " + Thread.currentThread().getName())
-                )
-                .doOnTerminate(() ->
-                        System.out.println("[doOnTerminate] thread = " + Thread.currentThread().getName())
-                )
-                .doOnUnsubscribe(() ->
-                        System.out.println("[doOnUnsubscribe] thread = " + Thread.currentThread().getName())
-                )
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.computation());
+                // observeOn 定义观察者执行的异步线程池
+                .observeOn(Schedulers.computation()) // 观察者在计算线程
+                // 操作符，对数据源中的数据执行的操作
+                .map(i -> {
+                    System.out.println("map3 : " + Thread.currentThread().getName() + ", " + i);
+                    return i * 10;
+                })
+                // subscribe 之后的逻辑，即是定义观察者（订阅者）
+                // 以上逻辑都属于定义阶段，并没有真正被执行。subscribe 这一步定义观察者逻辑，才会触发真正的上面所有流程的操作。
+                .subscribe(i -> System.out.println(Thread.currentThread().getName() + " 接收到: " + i));
 
-        Subscription sub = source.subscribe(
-                x -> System.out.println("[onNext] " + x + ", thread = " + Thread.currentThread().getName()),
-                e -> System.out.println("[onError] " + e),
-                () -> System.out.println("[onCompleted] thread = " + Thread.currentThread().getName())
-        );
-
-        // 模拟稍后取消订阅（触发 doOnUnsubscribe）
-        Thread.sleep(1000);
-        sub.unsubscribe();
-
-        Thread.sleep(2000);
-    }
-
-    // 自定义 lift Operator：打印每个事件
-    static class LogOperator implements Observable.Operator<Integer, Integer> {
-        @Override
-        public Subscriber<? super Integer> call(Subscriber<? super Integer> downstream) {
-
-            return new Subscriber<Integer>() {
-                @Override
-                public void onNext(Integer value) {
-                    System.out.println("[lift] onNext = " + value + ", thread = " + Thread.currentThread().getName());
-                    downstream.onNext(value);
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    System.out.println("[lift] onError, thread = " + Thread.currentThread().getName());
-                    downstream.onError(e);
-                }
-
-                @Override
-                public void onCompleted() {
-                    System.out.println("[lift] onCompleted thread = " + Thread.currentThread().getName());
-                    downstream.onCompleted();
-                }
-            };
-        }
+        Thread.sleep(2000); // 等待异步线程完成
     }
 }

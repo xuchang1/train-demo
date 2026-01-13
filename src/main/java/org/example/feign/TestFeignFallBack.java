@@ -25,4 +25,9 @@ public class TestFeignFallBack implements TestFeign {
         log.info("failback次数 ：{}", i.incrementAndGet());
         return testFeignBack.testException2();
     }
+
+    @Override
+    public String testNormal() {
+        return null;
+    }
 }

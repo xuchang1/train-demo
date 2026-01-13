@@ -11,4 +11,7 @@ public interface TestFeign {
 
     @GetMapping("/testException")
     String testException();
+
+    @GetMapping(value = "/testNormalFeign", name = "a")
+    String testNormal();
 }
